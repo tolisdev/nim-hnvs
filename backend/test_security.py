@@ -7,12 +7,12 @@ import sys
 import os
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from app import app, ACTIVE_SESSIONS, is_token_valid
+from app import app, REVOKED_TOKENS, is_token_valid
 
 class SecurityTestSuite(unittest.TestCase):
     def setUp(self):
         self.client = app.test_client()
-        ACTIVE_SESSIONS.clear()
+        REVOKED_TOKENS.clear()
 
     def test_01_security_headers_present(self):
         """Verify standard security headers are injected in responses"""

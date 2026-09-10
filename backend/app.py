@@ -68,8 +68,10 @@ def create_session_token(username: str, ttl_hours: float = 24.0) -> str:
     raw = f"{payload}:{sig}"
     return base64.urlsafe_b64encode(raw.encode('utf-8')).decode('utf-8')
 
+REVOKED_TOKENS = set()
+
 def parse_and_validate_token(token: str):
-    if not token:
+    if not token or token in REVOKED_TOKENS:
         return None
     try:
         raw = base64.urlsafe_b64decode(token.encode('utf-8')).decode('utf-8')
@@ -164,6 +166,10 @@ def api_auth_verify():
 
 @app.route('/api/auth/logout', methods=['POST'])
 def api_auth_logout():
+    auth_header = request.headers.get('Authorization', '')
+    token = auth_header.split('Bearer ', 1)[1].strip() if auth_header.startswith('Bearer ') else ''
+    if token:
+        REVOKED_TOKENS.add(token)
     return jsonify({'success': True})
 
 @app.route('/api/lessons', methods=['GET'])
@@ -348,8 +354,9 @@ def trigger_ocr_scan_stream(lesson_id):
                 detected_secs = extract_page_timestamps(full_path)
                 page_to_seconds[page_num] = detected_secs
                 formatted_found = [f"{s//60:02d}:{s%60:02d}" for s in sorted(list(detected_secs))]
+                found_str = ', '.join(formatted_found)
                 if formatted_found:
-                    yield f"data: {json.dumps({'type': 'log', 'message': f'[Σελίδα {page_num}] Εντοπίστηκαν χρόνοι σημειώσεων: {', '.join(formatted_found)}'}, ensure_ascii=False)}\n\n"
+                    yield f"data: {json.dumps({'type': 'log', 'message': f'[Σελίδα {page_num}] Εντοπίστηκαν χρόνοι σημειώσεων: {found_str}'}, ensure_ascii=False)}\n\n"
                 else:
                     yield f"data: {json.dumps({'type': 'log', 'message': f'[Σελίδα {page_num}] Δεν εντοπίστηκε εμφανής χρόνος.'}, ensure_ascii=False)}\n\n"
 

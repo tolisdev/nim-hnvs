@@ -294,8 +294,9 @@ def match_lesson_timestamps_to_pages(pages_dir: str, target_timestamps: list, pr
         page_to_seconds[p_num] = detected_secs
 
         formatted_found = [f"{s//60:02d}:{s%60:02d}" for s in sorted(list(detected_secs))]
+        found_str = ', '.join(formatted_found)
         if formatted_found:
-            logs.append(f"[Σελίδα {p_num}] Εντοπίστηκαν χρόνοι σημειώσεων: {', '.join(formatted_found)}")
+            logs.append(f"[Σελίδα {p_num}] Εντοπίστηκαν χρόνοι σημειώσεων: {found_str}")
         else:
             logs.append(f"[Σελίδα {p_num}] Δεν εντοπίστηκε εμφανής χρόνος.")
 
