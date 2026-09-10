@@ -20,6 +20,7 @@ services:
       - "5055"
     networks:
       - app-net
+      - proxied
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
 
@@ -36,6 +37,7 @@ services:
       - backend
     networks:
       - app-net
+      - proxied
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
 
@@ -56,3 +58,5 @@ services:
 networks:
   app-net:
     driver: bridge
+  proxied:
+    external: true
