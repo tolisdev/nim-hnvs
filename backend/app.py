@@ -31,7 +31,7 @@ def load_env_vars():
         os.path.join(BASE_DIR, '.env'),
         os.path.join(os.path.dirname(BASE_DIR), '.env')
     ]
-    vars_dict = {}
+    vars_dict = dict(os.environ)
     for env_path in candidates:
         if os.path.exists(env_path):
             try:

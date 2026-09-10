@@ -16,6 +16,7 @@ services:
       - PYTHONUNBUFFERED=1
     volumes:
       - ./backend/storage:/app/backend/storage
+      - ./.env:/app/backend/.env:ro
     expose:
       - "5055"
     networks:
