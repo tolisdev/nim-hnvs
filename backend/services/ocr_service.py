@@ -196,12 +196,20 @@ def analyze_page_local(image_path: str, page_num: int = 1):
 def extract_page_timestamps(image_path: str):
     """
     Extracts all candidate timestamps (in seconds) from a page image using EasyOCR.
-    Checks both red ink markings and full-page text with digit normalization.
+    Optimized for CPU speed: resizes image and checks red mask first.
     """
     found_seconds = set()
     reader = get_easyocr_reader()
     if reader is None:
         return found_seconds
+
+    # Limit PyTorch threads to 2 for efficient CPU execution without thread contention
+    try:
+        import torch
+        if torch.get_num_threads() > 2:
+            torch.set_num_threads(2)
+    except Exception:
+        pass
 
     def parse_text_for_timestamps(text_str):
         # Normalize common OCR confusions in digits
@@ -222,25 +230,37 @@ def extract_page_timestamps(image_path: str):
             if mins < 180:
                 found_seconds.add(mins * 60)
 
-    # 1. Red mask extraction
+    # 1. Read and downscale image to max width 1100 for fast CPU inference
+    img = None
     if cv2 is not None and np is not None:
         try:
             img = cv2.imread(image_path)
             if img is not None:
+                h, w = img.shape[:2]
+                if w > 1100:
+                    scale = 1100.0 / w
+                    img = cv2.resize(img, (1100, int(h * scale)), interpolation=cv2.INTER_AREA)
+
+                # Red mask extraction
                 hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
                 mask = cv2.inRange(hsv, np.array([0, 40, 30]), np.array([14, 255, 255])) | \
                        cv2.inRange(hsv, np.array([160, 40, 30]), np.array([180, 255, 255]))
                 if cv2.countNonZero(mask) > 50:
                     inv = cv2.bitwise_not(mask)
-                    res_red = reader.readtext(inv)
+                    res_red = reader.readtext(inv, paragraph=False, y_ths=0.2)
                     for _, text, _ in res_red:
                         parse_text_for_timestamps(text)
         except Exception:
             pass
 
-    # 2. Full page extraction
+    # If timestamps were already found in red ink, skip full page scan!
+    if len(found_seconds) > 0:
+        return found_seconds
+
+    # 2. Fallback: Full page extraction using the resized image
     try:
-        res_full = reader.readtext(image_path)
+        target_img = img if img is not None else image_path
+        res_full = reader.readtext(target_img, paragraph=False, y_ths=0.2)
         for _, text, _ in res_full:
             parse_text_for_timestamps(text)
     except Exception:

@@ -349,6 +349,7 @@ def trigger_ocr_scan_stream(lesson_id):
 
                 full_path = os.path.join(out_pages_dir, page_file)
                 pct = int(((idx) / total) * 85)
+                yield ": heartbeat\n\n"
                 yield f"data: {json.dumps({'type': 'log', 'message': f'--- Σάρωση Σελίδας {page_num}/{total} για αριθμούς/χρόνους ---', 'progress': pct, 'current_page': page_num, 'total_pages': total}, ensure_ascii=False)}\n\n"
 
                 detected_secs = extract_page_timestamps(full_path)
@@ -359,6 +360,7 @@ def trigger_ocr_scan_stream(lesson_id):
                     yield f"data: {json.dumps({'type': 'log', 'message': f'[Σελίδα {page_num}] Εντοπίστηκαν χρόνοι σημειώσεων: {found_str}'}, ensure_ascii=False)}\n\n"
                 else:
                     yield f"data: {json.dumps({'type': 'log', 'message': f'[Σελίδα {page_num}] Δεν εντοπίστηκε εμφανής χρόνος.'}, ensure_ascii=False)}\n\n"
+                yield ": heartbeat\n\n"
 
             # Match target timestamps to pages
             targets = sorted(existing_ts, key=lambda x: int(x.get('seconds', 0)))
