@@ -1,0 +1,9 @@
+__pycache__
+*.py[cod]
+*$py.class
+.env
+.env.*
+storage/pages/*
+storage/pdfs/*.pdf
+!storage/pages/.gitkeep
+!storage/pdfs/.gitkeep

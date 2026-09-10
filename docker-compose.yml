@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    image: ghcr.io/tolisdev/nim-hnvs-backend:latest
+    container_name: nim-hnvs-backend
+    restart: unless-stopped
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      - PORT=5055
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./backend/storage:/app/backend/storage
+    expose:
+      - "5055"
+    networks:
+      - app-net
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    image: ghcr.io/tolisdev/nim-hnvs-frontend:latest
+    container_name: nim-hnvs-frontend
+    restart: unless-stopped
+    ports:
+      - "${PORT:-80}:80"
+    depends_on:
+      - backend
+    networks:
+      - app-net
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  watchtower:
+    image: containrrr/watchtower:latest
+    container_name: nim-hnvs-watchtower
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WATCHTOWER_POLL_INTERVAL=300
+      - WATCHTOWER_LABEL_ENABLE=true
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_ROLLING_RESTART=true
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    driver: bridge
