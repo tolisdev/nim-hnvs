@@ -15,9 +15,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-# Install python dependencies
+# Install python dependencies (using CPU-only torch for lightweight footprint)
 COPY backend/requirements.txt /app/backend/requirements.txt
-RUN pip install --no-cache-dir -r /app/backend/requirements.txt
+RUN pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu \
+    && pip install --no-cache-dir -r /app/backend/requirements.txt
 
 # Copy backend application code & api bridge
 COPY backend /app/backend

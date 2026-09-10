@@ -16,8 +16,11 @@ _easyocr_reader = None
 def get_easyocr_reader():
     global _easyocr_reader
     if _easyocr_reader is None:
-        import easyocr
-        _easyocr_reader = easyocr.Reader(['en'], gpu=False, verbose=False)
+        try:
+            import easyocr
+            _easyocr_reader = easyocr.Reader(['en'], gpu=False, verbose=False)
+        except Exception:
+            _easyocr_reader = None
     return _easyocr_reader
 
 def get_gemini_key():
