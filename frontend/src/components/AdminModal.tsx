@@ -431,7 +431,9 @@ export const AdminModal: React.FC<AdminModalProps> = ({
                   2. Αυτόματη Αναγνώριση Κόκκινων Χρονοετικετών (Cloud & Local)
                 </h3>
                 <p className="text-xs text-slate-400 mt-1">
-                  Επιλέξτε ανάμεσα σε <span className="text-rose-300 font-semibold">Cloud Gemini Flash</span> (υψηλή ακρίβεια) ή <span className="text-sky-300 font-semibold">Τοπικό OpenCV + EasyOCR</span> (100% offline).
+                  {timestamps.length > 0
+                    ? 'Το Τοπικό OCR εντοπίζει σε ποιες σελίδες ανήκουν οι υπάρχουσες χρονοετικέτες του eClass (χωρίς κατανάλωση API Quota).'
+                    : 'Επιλέξτε ανάμεσα σε Cloud Gemini Flash (υψηλή ακρίβεια) ή Τοπικό OpenCV + EasyOCR (100% offline).'}
                 </p>
               </div>
               
@@ -456,14 +458,14 @@ export const AdminModal: React.FC<AdminModalProps> = ({
                   onClick={() => handleRunOcr('local')}
                   disabled={isScanning}
                   className="px-3.5 py-2 bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs rounded-xl shadow-lg cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
-                  title="100% Offline σάρωση με OpenCV & EasyOCR"
+                  title={timestamps.length > 0 ? "Εντοπισμός σελίδων για τις υπάρχουσες χρονοετικέτες (100% Offline)" : "100% Offline σάρωση με OpenCV & EasyOCR"}
                 >
                   {isScanning && activeMode === 'local' ? (
                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
                   ) : (
                     <Cpu className="w-3.5 h-3.5" />
                   )}
-                  <span>Τοπικό OCR (Offline)</span>
+                  <span>{timestamps.length > 0 ? 'Τοπική Αντιστοίχιση (Offline)' : 'Τοπικό OCR (Offline)'}</span>
                 </button>
               </div>
             </div>

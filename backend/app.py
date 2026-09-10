@@ -13,7 +13,7 @@ from flask import Flask, request, jsonify, send_from_directory, Response, stream
 from flask_cors import CORS
 from services.pdf_service import extract_pdf_pages
 from services.storage_service import load_lessons, get_lesson_by_id, upsert_lesson, delete_lesson
-from services.ocr_service import analyze_page_cloud, analyze_page_local
+from services.ocr_service import analyze_page_cloud, analyze_page_local, match_lesson_timestamps_to_pages, extract_page_timestamps
 from services.eclass_api_service import get_lesson_details, list_all_eclass_lessons, get_api_key
 
 app = Flask(__name__)
@@ -323,9 +323,82 @@ def trigger_ocr_scan_stream(lesson_id):
             yield f"data: {json.dumps({'type': 'error', 'message': 'Δεν βρέθηκαν εξαγμένες σελίδες.'}, ensure_ascii=False)}\n\n"
             return
 
-        pages = sorted([p for p in os.listdir(out_pages_dir) if p.endswith('.png')])
+        pages = sorted([p for p in os.listdir(out_pages_dir) if p.endswith('.png')],
+                       key=lambda x: int(re.search(r'\d+', x).group()) if re.search(r'\d+', x) else 0)
         total = len(pages)
-        
+        existing_ts = lesson.get('timestamps', [])
+
+        # If Local OCR and we ALREADY have timestamps (e.g. from eClass API),
+        # use Target-Driven Matcher: find pages for known timestamps, preserving official titles!
+        if mode == 'local' and existing_ts:
+            yield f"data: {json.dumps({'type': 'log', 'message': f'🎯 Εντοπίστηκαν {len(existing_ts)} επίσημες χρονοετικέτες. Έναρξη τοπικής αντιστοίχισης σε {total} σελίδες (χωρίς μεταβολή τίτλων)...', 'progress': 0}, ensure_ascii=False)}\n\n"
+
+            page_to_seconds = {}
+            for idx, page_file in enumerate(pages):
+                try:
+                    m = re.search(r'page_(\d+)', page_file)
+                    page_num = int(m.group(1)) if m else (idx + 1)
+                except Exception:
+                    page_num = idx + 1
+
+                full_path = os.path.join(out_pages_dir, page_file)
+                pct = int(((idx) / total) * 85)
+                yield f"data: {json.dumps({'type': 'log', 'message': f'--- Σάρωση Σελίδας {page_num}/{total} για αριθμούς/χρόνους ---', 'progress': pct, 'current_page': page_num, 'total_pages': total}, ensure_ascii=False)}\n\n"
+
+                detected_secs = extract_page_timestamps(full_path)
+                page_to_seconds[page_num] = detected_secs
+                formatted_found = [f"{s//60:02d}:{s%60:02d}" for s in sorted(list(detected_secs))]
+                if formatted_found:
+                    yield f"data: {json.dumps({'type': 'log', 'message': f'[Σελίδα {page_num}] Εντοπίστηκαν χρόνοι σημειώσεων: {', '.join(formatted_found)}'}, ensure_ascii=False)}\n\n"
+                else:
+                    yield f"data: {json.dumps({'type': 'log', 'message': f'[Σελίδα {page_num}] Δεν εντοπίστηκε εμφανής χρόνος.'}, ensure_ascii=False)}\n\n"
+
+            # Match target timestamps to pages
+            targets = sorted(existing_ts, key=lambda x: int(x.get('seconds', 0)))
+            matched_pages = [None] * len(targets)
+            matched_diffs = [float('inf')] * len(targets)
+
+            for i, item in enumerate(targets):
+                target_sec = int(item.get('seconds', 0))
+                for p_num, sec_set in page_to_seconds.items():
+                    for sec in sec_set:
+                        diff = abs(sec - target_sec)
+                        if diff <= 90 and diff < matched_diffs[i]:
+                            matched_diffs[i] = diff
+                            matched_pages[i] = p_num
+
+            if matched_pages[0] is None:
+                matched_pages[0] = 1
+
+            for i in range(len(targets)):
+                if matched_pages[i] is None:
+                    next_p = total
+                    for j in range(i + 1, len(targets)):
+                        if matched_pages[j] is not None:
+                            next_p = matched_pages[j]
+                            break
+                    prev_p = matched_pages[i - 1] if i > 0 else 1
+                    matched_pages[i] = min(max(prev_p, 1), next_p)
+                elif i > 0 and matched_pages[i] < matched_pages[i - 1]:
+                    matched_pages[i] = matched_pages[i - 1]
+
+            for i, item in enumerate(targets):
+                assigned = matched_pages[i]
+                item['page'] = assigned
+                ts_str = item.get('timestamp_str', '')
+                label = item.get('label', '')
+                if matched_diffs[i] < float('inf'):
+                    yield f"data: {json.dumps({'type': 'log', 'message': f'✓ {ts_str} -> Σελίδα {assigned} (Εντοπίστηκε για: \"{label}\")'}, ensure_ascii=False)}\n\n"
+                else:
+                    yield f"data: {json.dumps({'type': 'log', 'message': f'• {ts_str} -> Σελίδα {assigned} (Χρονολογική σειρά: \"{label}\")'}, ensure_ascii=False)}\n\n"
+
+            lesson['timestamps'] = targets
+            upsert_lesson(lesson)
+            yield f"data: {json.dumps({'type': 'log', 'message': f'Ολοκληρώθηκε! Αντιστοιχίστηκαν και οι {len(targets)} επίσημες χρονοετικέτες στις {total} σελίδες.', 'progress': 100}, ensure_ascii=False)}\n\n"
+            yield f"data: {json.dumps({'type': 'complete', 'detected': targets, 'lesson': lesson}, ensure_ascii=False)}\n\n"
+            return
+
+        # Otherwise: Discovery mode (Cloud Gemini Vision or empty lesson discovery)
         mode_label = "Τοπικό OCR (OpenCV & EasyOCR)" if mode == "local" else "Cloud Vision (Gemini 3.6 Flash)"
         yield f"data: {json.dumps({'type': 'log', 'message': f'Έναρξη σάρωσης ({mode_label}) για {total} σελίδες...', 'progress': 0}, ensure_ascii=False)}\n\n"
         
