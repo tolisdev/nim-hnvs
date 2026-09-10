@@ -20,6 +20,9 @@ COPY backend/requirements.txt /app/backend/requirements.txt
 RUN pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu \
     && pip install --no-cache-dir -r /app/backend/requirements.txt
 
+# Pre-download EasyOCR detection and recognition models into the image
+RUN python -c "import easyocr; easyocr.Reader(['en'], gpu=False)"
+
 # Copy backend application code & api bridge
 COPY backend /app/backend
 COPY api /app/api
@@ -34,4 +37,4 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
 
 WORKDIR /app/backend
 
-CMD ["gunicorn", "--bind", "0.0.0.0:5055", "--workers", "2", "--threads", "4", "--timeout", "120", "app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5055", "--workers", "2", "--threads", "4", "--timeout", "600", "app:app"]
