@@ -4,8 +4,12 @@ import base64
 import time
 import re
 import requests
-import cv2
-import numpy as np
+try:
+    import cv2
+    import numpy as np
+except ImportError:
+    cv2 = None
+    np = None
 
 _easyocr_reader = None
 
@@ -118,6 +122,10 @@ def analyze_page_cloud(image_path: str, page_num: int = 1):
 def analyze_page_local(image_path: str, page_num: int = 1):
     logs = []
     logs.append(f"[Σελίδα {page_num} - Local] Επεξεργασία με OpenCV & EasyOCR...")
+
+    if cv2 is None or np is None:
+        logs.append(f"[Σελίδα {page_num} - Local] Το OpenCV/NumPy δεν είναι διαθέσιμο. Χρησιμοποιήστε το Cloud OCR (Gemini).")
+        return [], logs
 
     try:
         img = cv2.imread(image_path)
