@@ -1,0 +1,608 @@
+[
+  {
+    "id": "lesson_037",
+    "number": "037",
+    "title": "Μάθημα 037: Άσκηση 4.187 - Κρούσεις & Ταλαντώσεις",
+    "youtube_id": "2ovEBtdZJrI",
+    "youtube_url": "youtube.com/watch?v=2ovEBtdZJrI",
+    "total_pages": 8,
+    "pages": [
+      {
+        "page_number": 1,
+        "image_url": "/api/pages/lesson_037/page_1.png",
+        "width": 1755,
+        "height": 1240
+      },
+      {
+        "page_number": 2,
+        "image_url": "/api/pages/lesson_037/page_2.png",
+        "width": 1755,
+        "height": 1240
+      },
+      {
+        "page_number": 3,
+        "image_url": "/api/pages/lesson_037/page_3.png",
+        "width": 1755,
+        "height": 1240
+      },
+      {
+        "page_number": 4,
+        "image_url": "/api/pages/lesson_037/page_4.png",
+        "width": 1755,
+        "height": 1240
+      },
+      {
+        "page_number": 5,
+        "image_url": "/api/pages/lesson_037/page_5.png",
+        "width": 1755,
+        "height": 1240
+      },
+      {
+        "page_number": 6,
+        "image_url": "/api/pages/lesson_037/page_6.png",
+        "width": 1755,
+        "height": 1240
+      },
+      {
+        "page_number": 7,
+        "image_url": "/api/pages/lesson_037/page_7.png",
+        "width": 1755,
+        "height": 1240
+      },
+      {
+        "page_number": 8,
+        "image_url": "/api/pages/lesson_037/page_8.png",
+        "width": 1755,
+        "height": 1240
+      }
+    ],
+    "timestamps": [
+      {
+        "timestamp_str": "04:00",
+        "seconds": 240,
+        "label": "v1', v2' (Γενικές σχέσεις ΜΕΚ)",
+        "page": 1
+      },
+      {
+        "timestamp_str": "09:00",
+        "seconds": 540,
+        "label": "Αρχικές συνθήκες",
+        "page": 1
+      },
+      {
+        "timestamp_str": "13:00",
+        "seconds": 780,
+        "label": "ii) ΔX/Xαρχ %",
+        "page": 1
+      },
+      {
+        "timestamp_str": "16:55",
+        "seconds": 1015,
+        "label": "α)",
+        "page": 9
+      },
+      {
+        "timestamp_str": "21:00",
+        "seconds": 1260,
+        "label": "προσοχή",
+        "page": 9
+      },
+      {
+        "timestamp_str": "22:40",
+        "seconds": 1360,
+        "label": "Βρίσκουμε την ΘΙ του σώματος που ταλαντώνεται",
+        "page": 9
+      },
+      {
+        "timestamp_str": "26:35",
+        "seconds": 1595,
+        "label": "Αρχικές συνθήκες - Μεγάλη προσοχή στο y0",
+        "page": 9
+      },
+      {
+        "timestamp_str": "30:15",
+        "seconds": 1815,
+        "label": "",
+        "page": 9
+      },
+      {
+        "timestamp_str": "33:20",
+        "seconds": 2000,
+        "label": "Βάζουμε αλγεβρικές τιμές",
+        "page": 9
+      },
+      {
+        "timestamp_str": "36:00",
+        "seconds": 2160,
+        "label": "Από τι εξαρτάται: i) Α, φ0 ii) ω",
+        "page": 3
+      },
+      {
+        "timestamp_str": "38:50",
+        "seconds": 2330,
+        "label": "Επέκταση: Για την Fελ(t)",
+        "page": 4
+      },
+      {
+        "timestamp_str": "44:45",
+        "seconds": 2685,
+        "label": "Ανακεφαλαίωση",
+        "page": 6
+      }
+    ]
+  },
+  {
+    "id": "lesson_036",
+    "number": "036",
+    "title": "Μάθημα 036 : Άσκηση 1.38 σχολικού ερωτήματα 7α(σχέση διαστημάτων),7β και 8(i,ii,iii,iv,v)",
+    "youtube_id": "eBnAI69lGq8",
+    "youtube_url": "https://youtu.be/eBnAI69lGq8",
+    "total_pages": 27,
+    "pages": [
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_1.png",
+        "page_number": 1,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_2.png",
+        "page_number": 2,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_3.png",
+        "page_number": 3,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_4.png",
+        "page_number": 4,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_5.png",
+        "page_number": 5,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_6.png",
+        "page_number": 6,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_7.png",
+        "page_number": 7,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_8.png",
+        "page_number": 8,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_9.png",
+        "page_number": 9,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_10.png",
+        "page_number": 10,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_11.png",
+        "page_number": 11,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_12.png",
+        "page_number": 12,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_13.png",
+        "page_number": 13,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_14.png",
+        "page_number": 14,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_15.png",
+        "page_number": 15,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_16.png",
+        "page_number": 16,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_17.png",
+        "page_number": 17,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_18.png",
+        "page_number": 18,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_19.png",
+        "page_number": 19,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_20.png",
+        "page_number": 20,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_21.png",
+        "page_number": 21,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_22.png",
+        "page_number": 22,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_23.png",
+        "page_number": 23,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_24.png",
+        "page_number": 24,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_25.png",
+        "page_number": 25,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_26.png",
+        "page_number": 26,
+        "width": 1755
+      },
+      {
+        "height": 1240,
+        "image_url": "/api/pages/lesson_036/page_27.png",
+        "page_number": 27,
+        "width": 1755
+      }
+    ],
+    "timestamps": [
+      {
+        "id": "eclass_1",
+        "label": "6α i) Uz ≥ K",
+        "page": 1,
+        "seconds": 710,
+        "sublabel": "6α i) Uz ≥ K — εύρεση Δtολ = 2Δt2 = T/2 με το περιστρεφόμενο διάνυσμα",
+        "timestamp_str": "00:11:50"
+      },
+      {
+        "id": "eclass_2",
+        "label": "Ερώτημα 8: ΑΔΕΤ για την εύρεση της ταχύτητας στη θέση y = 0,025 m",
+        "page": 1,
+        "seconds": 740,
+        "sublabel": "Ερώτημα 8: ΑΔΕΤ για την εύρεση της ταχύτητας στη θέση y = 0,025 m",
+        "timestamp_str": "00:12:20"
+      },
+      {
+        "id": "eclass_3",
+        "label": "β τρόπος για y=+A: ΣF = W + Fελ, υπολογισμός ΣF στις ακραίες θέσεις",
+        "page": 1,
+        "seconds": 1080,
+        "sublabel": "β τρόπος για y=+A: ΣF = W + Fελ, υπολογισμός ΣF στις ακραίες θέσεις",
+        "timestamp_str": "00:18:00"
+      },
+      {
+        "id": "eclass_4",
+        "label": "6α ii) K ≥ Uz",
+        "page": 1,
+        "seconds": 1140,
+        "sublabel": "6α ii) K ≥ Uz — επιλύουμε ως προς x, |x| ≤ A√2/2, Δtολ = T/10",
+        "timestamp_str": "00:19:00"
+      },
+      {
+        "id": "eclass_5",
+        "label": "για 1η φορά: v = -vmax√3/2 = -0,25√3 m/s",
+        "page": 1,
+        "seconds": 1155,
+        "sublabel": "για 1η φορά: v = -vmax√3/2 = -0,25√3 m/s",
+        "timestamp_str": "00:19:15"
+      },
+      {
+        "id": "eclass_6",
+        "label": "β τρόπος: διανυσματικός ορισμός της δύναμης ελατηρίου Fελ = -k(Δl0 + y) | Σχόλιο: γιατί περιμέναμε |v| = vmax√3/2 όταν |y| = A/2",
+        "page": 1,
+        "seconds": 1200,
+        "sublabel": "β τρόπος: διανυσματικός ορισμός της δύναμης ελατηρίου Fελ = -k(Δl0 + y) | Σχόλιο: γιατί περιμέναμε |v| = vmax√3/2 όταν |y| = A/2",
+        "timestamp_str": "00:20:00"
+      },
+      {
+        "id": "eclass_7",
+        "label": "Σχόλιο: εύρεση Uz, Uελ, UB στη θέση y = +A (Uz ≠ Uελ + UB)",
+        "page": 1,
+        "seconds": 1440,
+        "sublabel": "Σχόλιο: εύρεση Uz, Uελ, UB στη θέση y = +A (Uz ≠ Uελ + UB)",
+        "timestamp_str": "00:24:00"
+      },
+      {
+        "id": "eclass_8",
+        "label": "6β i) |x| > A√3/2 και ii) |x| < A√3/2",
+        "page": 1,
+        "seconds": 1480,
+        "sublabel": "6β i) |x| > A√3/2 και ii) |x| < A√3/2 — εύρεση χρονικών διαρκειών",
+        "timestamp_str": "00:24:40"
+      },
+      {
+        "id": "eclass_9",
+        "label": "Πως σκεφτόμαστε: WΣF = -ΔU, dUB = -dWw, dUελ = -dWFελ",
+        "page": 1,
+        "seconds": 1485,
+        "sublabel": "Πως σκεφτόμαστε: WΣF = -ΔU, dUB = -dWw, dUελ = -dWFελ",
+        "timestamp_str": "00:24:45"
+      },
+      {
+        "id": "eclass_10",
+        "label": "ii) dUB/dt = -dWw/dt = -W·v",
+        "page": 1,
+        "seconds": 1585,
+        "sublabel": "ii) dUB/dt = -dWw/dt = -W·v — ρυθμός μεταβολής βαρυτικής δυναμικής ενέργειας",
+        "timestamp_str": "00:26:25"
+      },
+      {
+        "id": "eclass_11",
+        "label": "Συνέχεια ερωτήματος 8",
+        "page": 1,
+        "seconds": 1785,
+        "sublabel": "Συνέχεια ερωτήματος 8 — ρυθμοί μεταβολής ενεργειών",
+        "timestamp_str": "00:29:45"
+      },
+      {
+        "id": "eclass_12",
+        "label": "iii) dUελ/dt = -dWFελ/dt = -Fελ·v",
+        "page": 1,
+        "seconds": 1875,
+        "sublabel": "iii) dUελ/dt = -dWFελ/dt = -Fελ·v",
+        "timestamp_str": "00:31:15"
+      },
+      {
+        "id": "eclass_13",
+        "label": "Αποτέλεσμα dUελ/dt = -3,125√3 J/s (Uελ ελαττώνεται)",
+        "page": 1,
+        "seconds": 2040,
+        "sublabel": "Αποτέλεσμα dUελ/dt = -3,125√3 J/s (Uελ ελαττώνεται)",
+        "timestamp_str": "00:34:00"
+      },
+      {
+        "id": "eclass_14",
+        "label": "iv) dK/dt = dWΣF/dt = ΣF·v",
+        "page": 1,
+        "seconds": 2065,
+        "sublabel": "iv) dK/dt = dWΣF/dt = ΣF·v — ΔK = WΣF (θ.μ.κ.ε.)",
+        "timestamp_str": "00:34:25"
+      },
+      {
+        "id": "eclass_15",
+        "label": "iv) dK/dt = Fεπ·v = -Dy0·v0 = 0,625√3 J/s (K αυξάνεται)",
+        "page": 1,
+        "seconds": 2115,
+        "sublabel": "iv) dK/dt = Fεπ·v = -Dy0·v0 = 0,625√3 J/s (K αυξάνεται)",
+        "timestamp_str": "00:35:15"
+      },
+      {
+        "id": "eclass_16",
+        "label": "Ανακεφαλαίωση του μαθήματος",
+        "page": 1,
+        "seconds": 2360,
+        "sublabel": "Ανακεφαλαίωση του μαθήματος",
+        "timestamp_str": "00:39:20"
+      }
+    ]
+  },
+  {
+    "id": "lesson_001",
+    "number": "001",
+    "title": "Γενικές σχέσεις Μεκ Α ,Β και Β1.Στο μάθημα υπάρχει και βίντεο από τις αναλογίες και τα ποσοστά",
+    "youtube_id": "intArAnoPLA",
+    "youtube_url": "https://youtu.be/intArAnoPLA",
+    "total_pages": 0,
+    "pages": [],
+    "timestamps": [
+      {
+        "id": "eclass_1",
+        "timestamp_str": "00:08:00",
+        "seconds": 480,
+        "label": "Γραμμένο με κόκκινο στο τέλος της απόδειξης των «Γενικών σχέσεων ΜΕΚ» (μπλε πλαίσιο): «Μνημονικά χωρίς απόδειξη (8min)»",
+        "sublabel": "Γραμμένο με κόκκινο στο τέλος της απόδειξης των «Γενικών σχέσεων ΜΕΚ» (μπλε πλαίσιο): «Μνημονικά χωρίς απόδειξη (8min)» — οι γενικές σχέσεις των ταχυτήτων v1' και v2' στη ΜΕΚ μαθαίνονται μνημονικά, χωρίς απόδειξη.",
+        "page": 1
+      },
+      {
+        "id": "eclass_2",
+        "timestamp_str": "00:28:30",
+        "seconds": 1710,
+        "label": "Κόκκινη σημείωση με βέλος μέσα στο κόκκινο πλαίσιο «Γενικές σχέσεις ΜΕΚ / Από ΑΔΟ και την ΑΔΚΕ προκύπτει:»",
+        "sublabel": "Κόκκινη σημείωση με βέλος μέσα στο κόκκινο πλαίσιο «Γενικές σχέσεις ΜΕΚ / Από ΑΔΟ και την ΑΔΚΕ προκύπτει:» — στο 28:30 δίνεται ο Μνημονικός Κανόνας για τις γενικές σχέσεις της ΜΕΚ.",
+        "page": 1
+      }
+    ]
+  },
+  {
+    "id": "lesson_014α",
+    "number": "014α",
+    "title": "Άσκηση 2.270 Παν που αφορά πλάγια κρούση σε πρόσοψη.",
+    "youtube_id": "KjW-VZ0BBZE",
+    "youtube_url": "https://youtu.be/KjW-VZ0BBZE",
+    "total_pages": 4,
+    "pages": [
+      {
+        "page_number": 1,
+        "image_url": "/api/pages/lesson_014α/page_1.png",
+        "width": 1755,
+        "height": 1240
+      },
+      {
+        "page_number": 2,
+        "image_url": "/api/pages/lesson_014α/page_2.png",
+        "width": 1755,
+        "height": 1240
+      },
+      {
+        "page_number": 3,
+        "image_url": "/api/pages/lesson_014α/page_3.png",
+        "width": 1755,
+        "height": 1240
+      },
+      {
+        "page_number": 4,
+        "image_url": "/api/pages/lesson_014α/page_4.png",
+        "width": 1755,
+        "height": 1240
+      }
+    ],
+    "timestamps": [
+      {
+        "timestamp_str": "7:00",
+        "seconds": 420,
+        "label": "Άξονας x",
+        "page": 1
+      },
+      {
+        "timestamp_str": "10:30",
+        "seconds": 630,
+        "label": "Άξονας y",
+        "page": 1
+      },
+      {
+        "timestamp_str": "17:30",
+        "seconds": 1050,
+        "label": "α) ΘΜΚΕ(Α->Γ)",
+        "page": 2
+      },
+      {
+        "timestamp_str": "22:00",
+        "seconds": 1320,
+        "label": "αα2 ή γ.α2 (χωρίς απόδειξη)",
+        "page": 2
+      },
+      {
+        "timestamp_str": "24:00",
+        "seconds": 1440,
+        "label": "προσοχή στις ταχύτητες",
+        "page": 2
+      },
+      {
+        "timestamp_str": "26:30",
+        "seconds": 1590,
+        "label": "δ) Μεταβολή της ορμής του συστήματος",
+        "page": 2
+      },
+      {
+        "timestamp_str": "29:30",
+        "seconds": 1770,
+        "label": "Περίληψη",
+        "page": 2
+      }
+    ]
+  },
+  {
+    "id": "lesson_038",
+    "number": "038",
+    "title": "Άσκηση 3.196 Παν επαναναληπτικό βοήθημα( φωτοτυπία). Οι εκφωνήσεις των ασκήσεων(και των λύσεων) του Παν επάν (επαναληπτικό) βρίσκονται στον αριθμό 8 του αρχικού καταλόγου.",
+    "youtube_id": "Ew3ElszvE24",
+    "youtube_url": "https://youtu.be/Ew3ElszvE24",
+    "total_pages": 0,
+    "pages": [],
+    "timestamps": [
+      {
+        "id": "eclass_1",
+        "timestamp_str": "00:06:00",
+        "seconds": 360,
+        "label": "Σχόλιο: η διαφορά μεταξύ 'κάποια χρονική στιγμή' και 'ταυτόχρονα'",
+        "sublabel": "Σχόλιο: η διαφορά μεταξύ 'κάποια χρονική στιγμή' και 'ταυτόχρονα' — να απαντηθεί γραπτά",
+        "page": 1
+      },
+      {
+        "id": "eclass_2",
+        "timestamp_str": "00:14:50",
+        "seconds": 890,
+        "label": "Ερώτημα β) εύρεση του ύψους h",
+        "sublabel": "Ερώτημα β) εύρεση του ύψους h — δύο τρόποι (Ww = -ΔUB και Ww = m2gh), h = 0,45 m",
+        "page": 1
+      },
+      {
+        "id": "eclass_3",
+        "timestamp_str": "00:16:15",
+        "seconds": 975,
+        "label": "Ερώτημα γ) ΑΔΟ στην πλαστική κρούση: |vκ| = 1,5 m/s",
+        "sublabel": "Ερώτημα γ) ΑΔΟ στην πλαστική κρούση: |vκ| = 1,5 m/s",
+        "page": 1
+      },
+      {
+        "id": "eclass_4",
+        "timestamp_str": "00:21:00",
+        "seconds": 1260,
+        "label": "Νέα θέση ισορροπίας ΘΙ2 του συσσωματώματος: |Δl02| = (m1+m2)g/k = 0,4 m",
+        "sublabel": "Νέα θέση ισορροπίας ΘΙ2 του συσσωματώματος: |Δl02| = (m1+m2)g/k = 0,4 m",
+        "page": 1
+      },
+      {
+        "id": "eclass_5",
+        "timestamp_str": "00:24:40",
+        "seconds": 1480,
+        "label": "Αρχικές συνθήκες του συσσωματώματος: |y02| = 0,3 m, |v0T| = |vκ| = 1,5 m/s",
+        "sublabel": "Αρχικές συνθήκες του συσσωματώματος: |y02| = 0,3 m, |v0T| = |vκ| = 1,5 m/s",
+        "page": 1
+      },
+      {
+        "id": "eclass_6",
+        "timestamp_str": "00:27:15",
+        "seconds": 1635,
+        "label": "ΑΔΕΤ στη θέση Ι: K0 + Uz0 = Ez ⟹ A' = 0,3√2 m και ω' = 5 rad/s, χρονικές εξισώσεις y(t), v(t), a(t)",
+        "sublabel": "ΑΔΕΤ στη θέση Ι: K0 + Uz0 = Ez ⟹ A' = 0,3√2 m και ω' = 5 rad/s, χρονικές εξισώσεις y(t), v(t), a(t)",
+        "page": 1
+      },
+      {
+        "id": "eclass_7",
+        "timestamp_str": "00:41:15",
+        "seconds": 2475,
+        "label": "Ανακεφαλαίωση του μαθήματος (μετά το ερώτημα δ και την εργασία για το σπίτι)",
+        "sublabel": "Ανακεφαλαίωση του μαθήματος (μετά το ερώτημα δ και την εργασία για το σπίτι)",
+        "page": 1
+      }
+    ]
+  }
+]

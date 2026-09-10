@@ -1,0 +1,13 @@
+Options -Indexes
+
+RewriteEngine On
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteRule ^search/?$ index.php [L,QSA]
+RewriteRule ^lesson/?$ index.php?action=lesson [L,QSA]
+RewriteRule ^lessons/?$ index.php?action=lessons [L,QSA]
+RewriteRule ^health/?$ index.php?health=1 [L,QSA]
+
+<FilesMatch "^(config\.php|config\.example\.php|lessons\.json|concepts\.json|video_links\.csv)$">
+    Require all denied
+</FilesMatch>

@@ -1,0 +1,94 @@
+openapi: 3.1.0
+info:
+  title: Ευρετήριο Μαλακασιώτη - COURSES113
+  description: Αναζητά και στα 52 μαθήματα και στις 555 χρονοετικέτες του μαθήματος ΦΥΣΙΚΗ Γ΄ ΛΥΚΕΙΟΥ 2026-2027.
+  version: 1.0.0
+servers:
+  - url: https://eclass.nimalakasiotis.gr/gpt-api
+paths:
+  /search:
+    get:
+      operationId: searchCourseIndex
+      summary: Αναζήτηση μαθήματος και χρονοετικέτας
+      description: Χρησιμοποίησέ το πριν απαντήσεις σε ερώτηση για μάθημα, έννοια, πηγή, βίντεο ή χρονοετικέτα. Το course COURSES113 είναι κλειδωμένο στον διακομιστή.
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: Η έννοια ή το ερώτημα του μαθητή, π.χ. «κινητική ενέργεια σε συνάρτηση με τον χρόνο».
+          schema:
+            type: string
+            minLength: 2
+            maxLength: 300
+      responses:
+        '200':
+          description: Αποτελέσματα αναζήτησης στο COURSES113.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query:
+                    type: string
+                  course_code:
+                    type: string
+                    const: COURSES113
+                  found:
+                    type: boolean
+                  confidence:
+                    type: string
+                    enum: [high, candidate, none]
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        lesson:
+                          type: string
+                        topic:
+                          type: string
+                        timestamp:
+                          type: string
+                        video_available:
+                          type: boolean
+                        video_url:
+                          type: [string, 'null']
+                          format: uri
+                        course_url:
+                          type: string
+                          format: uri
+                        description:
+                          type: string
+        '400':
+          description: Μη έγκυρο ερώτημα.
+        '401':
+          description: Λείπει ή είναι λανθασμένο το API key.
+        '500':
+          description: Σφάλμα δεδομένων στον διακομιστή.
+  /lesson:
+    get:
+      operationId: getLessonTimestamps
+      summary: Λήψη όλων των χρονοετικετών και βίντεο συγκεκριμένου μαθήματος
+      description: Επιστρέφει όλες τις χρονοετικέτες και το YouTube URL για το μάθημα με βάση το id (π.χ. 037) ή τον αριθμό.
+      parameters:
+        - name: id
+          in: query
+          required: true
+          description: Ο κωδικός του μαθήματος (π.χ. «037» ή «036»).
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Στοιχεία μαθήματος και πλήρεις χρονοετικέτες.
+        '404':
+          description: Το μάθημα δεν βρέθηκε.
+        '401':
+          description: Μη εξουσιοδοτημένη πρόσβαση.
+  /lessons:
+    get:
+      operationId: listLessons
+      summary: Κατάλογος όλων των διαθέσιμων μαθημάτων
+      description: Επιστρέφει τη λίστα των 54 μαθημάτων με σύνοψη και συνδέσμους βίντεο.
+      responses:
+        '200':
+          description: Λίστα μαθημάτων.
