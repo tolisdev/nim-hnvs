@@ -7,6 +7,8 @@ import hmac
 import secrets
 import functools
 import re
+import hashlib
+import base64
 from flask import Flask, request, jsonify, send_from_directory, Response, stream_with_context
 from flask_cors import CORS
 from services.pdf_service import extract_pdf_pages
@@ -53,24 +55,41 @@ if not allowed_origins:
     allowed_origins = ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:5055', 'http://127.0.0.1:5055']
 CORS(app, origins=allowed_origins, supports_credentials=True)
 
-# Active user sessions with 24-hour expiration TTL
-# Format: { token: { "username": str, "expires_at": float } }
-ACTIVE_SESSIONS = {}
+def get_session_secret() -> bytes:
+    vars_dict = load_env_vars()
+    sec = vars_dict.get('SESSION_SECRET') or os.getenv('SESSION_SECRET') or "nim-hnvs-default-secure-secret-key-2026"
+    return sec.encode('utf-8')
 
-def clean_expired_sessions():
-    now = time.time()
-    expired = [tok for tok, s in ACTIVE_SESSIONS.items() if s.get('expires_at', 0) <= now]
-    for tok in expired:
-        ACTIVE_SESSIONS.pop(tok, None)
+def create_session_token(username: str, ttl_hours: float = 24.0) -> str:
+    expires_at = int(time.time() + (ttl_hours * 3600))
+    payload = f"{username}:{expires_at}"
+    secret = get_session_secret()
+    sig = hmac.new(secret, payload.encode('utf-8'), hashlib.sha256).hexdigest()
+    raw = f"{payload}:{sig}"
+    return base64.urlsafe_b64encode(raw.encode('utf-8')).decode('utf-8')
+
+def parse_and_validate_token(token: str):
+    if not token:
+        return None
+    try:
+        raw = base64.urlsafe_b64decode(token.encode('utf-8')).decode('utf-8')
+        parts = raw.split(':')
+        if len(parts) != 3:
+            return None
+        username, expires_at_str, sig = parts
+        expires_at = int(expires_at_str)
+        if time.time() >= expires_at:
+            return None
+        secret = get_session_secret()
+        expected_sig = hmac.new(secret, f"{username}:{expires_at}".encode('utf-8'), hashlib.sha256).hexdigest()
+        if hmac.compare_digest(sig, expected_sig):
+            return {'username': username, 'expires_at': expires_at}
+    except Exception:
+        pass
+    return None
 
 def is_token_valid(token: str) -> bool:
-    if not token:
-        return False
-    clean_expired_sessions()
-    session = ACTIVE_SESSIONS.get(token)
-    if not session:
-        return False
-    return time.time() < session.get('expires_at', 0)
+    return parse_and_validate_token(token) is not None
 
 def require_auth(f):
     @functools.wraps(f)
@@ -121,12 +140,8 @@ def api_auth_login():
     if not (user_match and pass_match):
         return jsonify({'error': 'Λανθασμένο όνομα χρήστη ή κωδικός πρόσβασης.'}), 401
 
-    token = secrets.token_hex(32)
-    ttl_hours = float(ENV_VARS.get('SESSION_TTL_HOURS', 24))
-    ACTIVE_SESSIONS[token] = {
-        'username': admin_user,
-        'expires_at': time.time() + (ttl_hours * 3600)
-    }
+    ttl_hours = float(load_env_vars().get('SESSION_TTL_HOURS', 24))
+    token = create_session_token(admin_user, ttl_hours)
 
     return jsonify({
         'success': True,
@@ -139,19 +154,16 @@ def api_auth_login():
 def api_auth_verify():
     auth_header = request.headers.get('Authorization', '')
     token = auth_header.split('Bearer ', 1)[1].strip() if auth_header.startswith('Bearer ') else ''
-    if token and is_token_valid(token):
+    info = parse_and_validate_token(token)
+    if info:
         return jsonify({
             'authenticated': True,
-            'username': ACTIVE_SESSIONS[token]['username']
+            'username': info['username']
         })
     return jsonify({'authenticated': False}), 401
 
 @app.route('/api/auth/logout', methods=['POST'])
 def api_auth_logout():
-    auth_header = request.headers.get('Authorization', '')
-    token = auth_header.split('Bearer ', 1)[1].strip() if auth_header.startswith('Bearer ') else ''
-    if token:
-        ACTIVE_SESSIONS.pop(token, None)
     return jsonify({'success': True})
 
 @app.route('/api/lessons', methods=['GET'])
@@ -202,7 +214,7 @@ def get_lesson(lesson_id):
 @app.route('/api/pages/<folder>/<filename>')
 def serve_page_image(folder, filename):
     # Defense-in-depth against Path Traversal (CWE-22)
-    if not re.fullmatch(r'^[a-zA-Z0-9_\-]+$', folder):
+    if not re.fullmatch(r'^[a-zA-Z0-9_\-α-ωΑ-Ω]+$', folder):
         return jsonify({'error': 'Invalid folder parameter.'}), 400
     if not re.fullmatch(r'^[a-zA-Z0-9_\-\.]+\.(png|jpg|jpeg|webp)$', filename, re.IGNORECASE):
         return jsonify({'error': 'Invalid image filename parameter.'}), 400
@@ -277,7 +289,7 @@ def create_lesson():
 @app.route('/api/lessons/<lesson_id>', methods=['PUT'])
 @require_auth
 def update_lesson(lesson_id):
-    if not re.fullmatch(r'^[a-zA-Z0-9_\-]+$', lesson_id):
+    if not re.fullmatch(r'^[a-zA-Z0-9_\-α-ωΑ-Ω]+$', lesson_id):
         return jsonify({'error': 'Invalid lesson_id'}), 400
 
     data = request.json or {}
@@ -296,7 +308,7 @@ def update_lesson(lesson_id):
 @app.route('/api/lessons/<lesson_id>/ocr-scan', methods=['POST'])
 @require_auth
 def trigger_ocr_scan_stream(lesson_id):
-    if not re.fullmatch(r'^[a-zA-Z0-9_\-]+$', lesson_id):
+    if not re.fullmatch(r'^[a-zA-Z0-9_\-α-ωΑ-Ω]+$', lesson_id):
         return jsonify({'error': 'Invalid lesson_id'}), 400
 
     lesson = get_lesson_by_id(lesson_id)
@@ -370,7 +382,7 @@ def get_eclass_lesson(lesson_num):
 @app.route('/api/lessons/<lesson_id>/fetch-api', methods=['POST'])
 @require_auth
 def fetch_lesson_timestamps_api(lesson_id):
-    if not re.fullmatch(r'^[a-zA-Z0-9_\-]+$', lesson_id):
+    if not re.fullmatch(r'^[a-zA-Z0-9_\-α-ωΑ-Ω]+$', lesson_id):
         return jsonify({'error': 'Invalid lesson_id'}), 400
 
     lesson = get_lesson_by_id(lesson_id)
