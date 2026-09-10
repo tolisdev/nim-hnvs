@@ -104,7 +104,7 @@ def analyze_page_cloud(image_path: str, page_num: int = 1):
                 text = data["candidates"][0]["content"]["parts"][0]["text"]
                 detected = json.loads(text)
                 logs.append(f"[Σελίδα {page_num} - Cloud] Επιτυχία! Εντοπίστηκαν {len(detected)} χρονοετικέτες.")
-                time.sleep(2)
+                time.sleep(0.3)
                 return detected, logs
             elif resp.status_code == 429:
                 logs.append(f"[Σελίδα {page_num} - Cloud] Rate Limit 429. Αναμονή 4s...")
