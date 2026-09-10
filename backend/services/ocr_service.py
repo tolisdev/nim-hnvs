@@ -337,9 +337,9 @@ def match_lesson_timestamps_to_pages(pages_dir: str, target_timestamps: list, pr
         ts_str = item.get('timestamp_str', '')
         label = item.get('label', '')
         if matched_diffs[i] < float('inf'):
-            logs.append(f"✓ {ts_str} -> Σελίδα {assigned} (Εντοπίστηκε για: \"{label}\")")
+            logs.append(f"✓ {ts_str} -> Σελίδα {assigned} (Εντοπίστηκε για: '{label}')")
         else:
-            logs.append(f"• {ts_str} -> Σελίδα {assigned} (Χρονολογική σειρά: \"{label}\")")
+            logs.append(f"• {ts_str} -> Σελίδα {assigned} (Χρονολογική σειρά: '{label}')")
 
     logs.append(f"Ολοκληρώθηκε! Αντιστοιχίστηκαν και οι {len(targets)} χρονοετικέτες στις {total_pages} σελίδες.")
     return targets, logs

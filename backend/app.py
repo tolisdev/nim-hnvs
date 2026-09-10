@@ -395,9 +395,11 @@ def trigger_ocr_scan_stream(lesson_id):
                 ts_str = item.get('timestamp_str', '')
                 label = item.get('label', '')
                 if matched_diffs[i] < float('inf'):
-                    yield f"data: {json.dumps({'type': 'log', 'message': f'✓ {ts_str} -> Σελίδα {assigned} (Εντοπίστηκε για: \"{label}\")'}, ensure_ascii=False)}\n\n"
+                    msg = f"✓ {ts_str} -> Σελίδα {assigned} (Εντοπίστηκε για: '{label}')"
+                    yield f"data: {json.dumps({'type': 'log', 'message': msg}, ensure_ascii=False)}\n\n"
                 else:
-                    yield f"data: {json.dumps({'type': 'log', 'message': f'• {ts_str} -> Σελίδα {assigned} (Χρονολογική σειρά: \"{label}\")'}, ensure_ascii=False)}\n\n"
+                    msg = f"• {ts_str} -> Σελίδα {assigned} (Χρονολογική σειρά: '{label}')"
+                    yield f"data: {json.dumps({'type': 'log', 'message': msg}, ensure_ascii=False)}\n\n"
 
             lesson['timestamps'] = targets
             upsert_lesson(lesson)
