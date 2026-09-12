@@ -37,17 +37,52 @@ export const LessonDrawer: React.FC<LessonDrawerProps> = ({
   isLoggedIn = false,
   onOpenNewLesson
 }) => {
-  const [allLessons, setAllLessons] = useState<EclassLessonSummary[]>([]);
+  const [eclassLessons, setEclassLessons] = useState<EclassLessonSummary[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterMode, setFilterMode] = useState<'all' | 'with_notes' | 'favorites' | 'completed'>('all');
 
   useEffect(() => {
     fetchAvailableEclassLessons()
       .then((data) => {
-        setAllLessons(data);
+        if (Array.isArray(data)) setEclassLessons(data);
       })
       .catch((err) => console.error('Failed to load lessons for drawer:', err));
   }, []);
+
+  // Dynamically merge eClass catalog with any saved or custom lessons (e.g. lessons beyond 54)
+  const allLessons = useMemo<EclassLessonSummary[]>(() => {
+    const list: EclassLessonSummary[] = [...eclassLessons];
+    for (const saved of savedLessons) {
+      const idx = list.findIndex(
+        (l) => l.lesson_id.toLowerCase() === saved.number.toLowerCase() || `lesson_${l.lesson_id.toLowerCase()}` === saved.id.toLowerCase()
+      );
+      const parsedNum = parseInt(saved.number.replace(/\D/g, ''), 10) || 0;
+      const converted: EclassLessonSummary = {
+        lesson_id: saved.number,
+        lesson_number: parsedNum,
+        title: saved.title || `Μάθημα ${saved.number}`,
+        video_url: saved.youtube_url || '',
+        total_entries: saved.timestamps?.length || 0,
+        entries: (saved.timestamps || []).map((t) => ({
+          timestamp: t.timestamp_str,
+          seconds: t.seconds,
+          topic: t.label,
+          description: t.sublabel || ''
+        }))
+      };
+      if (idx >= 0) {
+        list[idx] = { ...list[idx], ...converted };
+      } else {
+        list.push(converted);
+      }
+    }
+    return list.sort((a, b) => {
+      const numA = parseInt(a.lesson_id.replace(/\D/g, ''), 10) || 0;
+      const numB = parseInt(b.lesson_id.replace(/\D/g, ''), 10) || 0;
+      if (numA !== numB) return numA - numB;
+      return a.lesson_id.localeCompare(b.lesson_id);
+    });
+  }, [eclassLessons, savedLessons]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

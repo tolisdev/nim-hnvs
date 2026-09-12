@@ -240,9 +240,9 @@ def create_lesson():
     youtube_url = request.form.get('youtube_url', '').strip()
     timestamps_json = request.form.get('timestamps_json', '[]')
     
-    # Input validation on lesson number
-    if not number or not re.fullmatch(r'^[0-9]+[a-zA-Zα-ωΑ-Ω]?$', number):
-        return jsonify({'error': 'Απαιτείται έγκυρος αριθμός μαθήματος (π.χ. 001, 014α).'}), 400
+    # Input validation on lesson number (support any lesson number or code: 001, 055, 014α, EXTRA-01, etc.)
+    if not number or not re.fullmatch(r'^[a-zA-Z0-9_\-α-ωΑ-Ω]+$', number):
+        return jsonify({'error': 'Απαιτείται έγκυρος αριθμός ή κωδικός μαθήματος (π.χ. 001, 055, 014α, EXTRA-01).'}), 400
 
     lesson_id = f'lesson_{number}'
     

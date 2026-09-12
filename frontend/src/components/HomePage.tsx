@@ -51,7 +51,7 @@ export const HomePage: React.FC<HomePageProps> = ({
   isLoggedIn = false,
   onOpenNewLesson
 }) => {
-  const [allLessons, setAllLessons] = useState<EclassLessonSummary[]>([]);
+  const [eclassLessons, setEclassLessons] = useState<EclassLessonSummary[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedChapter, setSelectedChapter] = useState<string>('all');
@@ -68,11 +68,46 @@ export const HomePage: React.FC<HomePageProps> = ({
   useEffect(() => {
     fetchAvailableEclassLessons()
       .then((data) => {
-        setAllLessons(data);
+        if (Array.isArray(data)) setEclassLessons(data);
       })
       .catch((err) => console.error('Failed to load eClass lessons:', err))
       .finally(() => setIsLoading(false));
   }, []);
+
+  // Dynamically merge eClass catalog with any saved or custom lessons (e.g. lessons beyond 54)
+  const allLessons = useMemo<EclassLessonSummary[]>(() => {
+    const list: EclassLessonSummary[] = [...eclassLessons];
+    for (const saved of savedLessons) {
+      const idx = list.findIndex(
+        (l) => l.lesson_id.toLowerCase() === saved.number.toLowerCase() || `lesson_${l.lesson_id.toLowerCase()}` === saved.id.toLowerCase()
+      );
+      const parsedNum = parseInt(saved.number.replace(/\D/g, ''), 10) || 0;
+      const converted: EclassLessonSummary = {
+        lesson_id: saved.number,
+        lesson_number: parsedNum,
+        title: saved.title || `Μάθημα ${saved.number}`,
+        video_url: saved.youtube_url || '',
+        total_entries: saved.timestamps?.length || 0,
+        entries: (saved.timestamps || []).map((t) => ({
+          timestamp: t.timestamp_str,
+          seconds: t.seconds,
+          topic: t.label,
+          description: t.sublabel || ''
+        }))
+      };
+      if (idx >= 0) {
+        list[idx] = { ...list[idx], ...converted };
+      } else {
+        list.push(converted);
+      }
+    }
+    return list.sort((a, b) => {
+      const numA = parseInt(a.lesson_id.replace(/\D/g, ''), 10) || 0;
+      const numB = parseInt(b.lesson_id.replace(/\D/g, ''), 10) || 0;
+      if (numA !== numB) return numA - numB;
+      return a.lesson_id.localeCompare(b.lesson_id);
+    });
+  }, [eclassLessons, savedLessons]);
 
   // Keyboard shortcut '/' to focus search, and 'Esc' to close timestamps modal
   useEffect(() => {
@@ -221,7 +256,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 </span>
               </h1>
               <p className="text-xs sm:text-sm text-slate-300 mt-2 leading-relaxed max-w-xl">
-                54 πλήρη μαθήματα θεωρίας και επίλυσης ασκήσεων από τον Νίκο Μαλακασιώτη, με ταυτόχρονο συγχρονισμό χειρόγραφων σημειώσεων PDF.
+                {allLessons.length} μαθήματα θεωρίας και επίλυσης ασκήσεων από τον Νίκο Μαλακασιώτη, με ταυτόχρονο συγχρονισμό χειρόγραφων σημειώσεων PDF.
               </p>
             </div>
           </div>
@@ -233,7 +268,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <GraduationCap className="w-3.5 h-3.5" />
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Μαθήματα</span>
               </div>
-              <div className="text-lg font-bold font-mono text-white">54</div>
+              <div className="text-lg font-bold font-mono text-white">{allLessons.length}</div>
               <div className="text-[10px] text-slate-500">Πλήρης σειρά</div>
             </div>
 
@@ -252,7 +287,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">Dual Sync</span>
               </div>
               <div className="text-lg font-bold font-mono text-white">
-                {savedLessons.filter((l) => l.total_pages > 0).length} / 54
+                {savedLessons.filter((l) => l.total_pages > 0).length} / {allLessons.length}
               </div>
               <div className="text-[10px] text-slate-500">Με PDF σημειώσεις</div>
             </div>
@@ -270,7 +305,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                   <span>Πρόοδος Μελέτης</span>
                 </span>
                 <span className="font-mono text-amber-400 font-bold">
-                  {completedLessons.length} / {allLessons.length || 54} ({completionPercent}%)
+                  {completedLessons.length} / {allLessons.length} ({completionPercent}%)
                 </span>
               </div>
               <div className="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800">
@@ -474,8 +509,8 @@ export const HomePage: React.FC<HomePageProps> = ({
               onChange={(e) => setSortBy(e.target.value as any)}
               className="bg-transparent text-xs text-slate-300 font-medium outline-none cursor-pointer"
             >
-              <option value="id_asc" className="bg-slate-900 text-slate-100">Αύξουσα (001 → 054)</option>
-              <option value="id_desc" className="bg-slate-900 text-slate-100">Φθίνουσα (054 → 001)</option>
+              <option value="id_asc" className="bg-slate-900 text-slate-100">Αύξουσα Αρίθμηση</option>
+              <option value="id_desc" className="bg-slate-900 text-slate-100">Φθίνουσα Αρίθμηση</option>
               <option value="entries_desc" className="bg-slate-900 text-slate-100">Περισσότερα Θέματα</option>
             </select>
           </div>

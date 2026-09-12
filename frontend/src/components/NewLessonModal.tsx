@@ -12,7 +12,10 @@ import {
   AlertCircle,
   FileText,
   Video,
-  Info
+  Info,
+  ChevronDown,
+  ChevronUp,
+  Sparkles
 } from 'lucide-react';
 import {
   createLessonWithFile,
@@ -41,13 +44,14 @@ export const NewLessonModal: React.FC<NewLessonModalProps> = ({
   const [timestamps, setTimestamps] = useState<TimestampItem[]>([]);
   
   const [availableEclassLessons, setAvailableEclassLessons] = useState<EclassLessonSummary[]>([]);
+  const [showEclassHelper, setShowEclassHelper] = useState<boolean>(false);
   const [selectedEclassId, setSelectedEclassId] = useState<string>('');
   
   const [isLoadingEclass, setIsLoadingEclass] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [statusMessage, setStatusMessage] = useState<{ type: 'success' | 'error' | 'info'; text: string } | null>(null);
 
-  // Load eClass lessons catalog on mount
+  // Load eClass lessons catalog on mount for optional auto-fill
   useEffect(() => {
     if (isOpen) {
       fetchAvailableEclassLessons()
@@ -69,6 +73,7 @@ export const NewLessonModal: React.FC<NewLessonModalProps> = ({
       setPdfFile(null);
       setTimestamps([]);
       setSelectedEclassId('');
+      setShowEclassHelper(false);
       setStatusMessage(null);
     }
   }, [isOpen]);
@@ -106,7 +111,7 @@ export const NewLessonModal: React.FC<NewLessonModalProps> = ({
     (l) => l.number.toLowerCase() === number.trim().toLowerCase()
   );
 
-  // Auto-fill from eClass selection
+  // Optional auto-fill from eClass selection
   const handleSelectEclassLesson = async (lessonId: string) => {
     setSelectedEclassId(lessonId);
     if (!lessonId) return;
@@ -149,7 +154,7 @@ export const NewLessonModal: React.FC<NewLessonModalProps> = ({
     } catch (err: any) {
       setStatusMessage({
         type: 'error',
-        text: `Δεν ήταν δυνατή η πλήρης ανάκτηση από το eClass: ${err.message}`
+        text: `Δεν ήταν δυνατή η ανάκτηση από το eClass: ${err.message}. Μπορείτε να συμπληρώσετε τα στοιχεία χειροκίνητα.`
       });
     } finally {
       setIsLoadingEclass(false);
@@ -196,15 +201,15 @@ export const NewLessonModal: React.FC<NewLessonModalProps> = ({
     if (!cleanNumber) {
       setStatusMessage({
         type: 'error',
-        text: 'Παρακαλώ εισάγετε αριθμό μαθήματος (π.χ. 038 ή 014α).'
+        text: 'Παρακαλώ εισάγετε αριθμό ή κωδικό μαθήματος (π.χ. 055, 056, 014α, ΕΠΑΝ-01).'
       });
       return;
     }
 
-    if (!/^[0-9]+[a-zA-Zα-ωΑ-Ω]?$/.test(cleanNumber)) {
+    if (!/^[a-zA-Z0-9_\-α-ωΑ-Ω]+$/.test(cleanNumber)) {
       setStatusMessage({
         type: 'error',
-        text: 'Μη έγκυρη μορφή αριθμού μαθήματος. Χρησιμοποιήστε αριθμούς με προαιρετικό γράμμα (π.χ. 001, 038, 014α).'
+        text: 'Μη έγκυρος κωδικός μαθήματος. Επιτρέπονται γράμματα, αριθμοί, παύλες και κάτω παύλες.'
       });
       return;
     }
@@ -250,12 +255,12 @@ export const NewLessonModal: React.FC<NewLessonModalProps> = ({
                 <h2 className="text-base font-bold text-slate-100">
                   Δημιουργία Νέου Μαθήματος
                 </h2>
-                <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                  Admin Tool
+                <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                  Χωρίς Περιορισμούς
                 </span>
               </div>
               <p className="text-xs text-slate-400 mt-0.5">
-                Εισαγωγή νέου μαθήματος με PDF σημειώσεων, YouTube βίντεο και συγχρονισμένες χρονοετικέτες.
+                Εισαγωγή οποιουδήποτε μαθήματος (νέου ή από το eClass) με PDF σημειώσεων, YouTube βίντεο και χρονοετικέτες.
               </p>
             </div>
           </div>
@@ -295,85 +300,41 @@ export const NewLessonModal: React.FC<NewLessonModalProps> = ({
             </div>
           )}
 
-          {/* Section 1: Quick Autofill from Open eClass Catalog */}
-          <div className="bg-slate-950/70 p-4 rounded-xl border border-slate-800 space-y-3">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div>
-                <h3 className="text-sm font-semibold text-amber-400 flex items-center gap-1.5">
-                  <Download className="w-4 h-4" />
-                  1. Αυτόματη Συμπλήρωση από Κατάλογο eClass (Προαιρετικό)
-                </h3>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  Επιλέξτε ένα από τα 54 προϋπάρχοντα μαθήματα του Open eClass για άμεση εισαγωγή τίτλου, βίντεο και χρονοετικετών.
-                </p>
-              </div>
-
-              {isLoadingEclass && (
-                <span className="text-xs text-amber-400 flex items-center gap-1 font-mono">
-                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  Ανάκτηση...
-                </span>
-              )}
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-              <select
-                value={selectedEclassId}
-                onChange={(e) => handleSelectEclassLesson(e.target.value)}
-                disabled={isLoadingEclass || isSubmitting}
-                className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-amber-500 disabled:opacity-50"
-              >
-                <option value="">-- Επιλέξτε μάθημα από το eClass για αυτόματη συμπλήρωση --</option>
-                {availableEclassLessons.map((l) => {
-                  const alreadySaved = existingLessons.some((ex) => ex.number === l.lesson_id);
-                  return (
-                    <option key={l.lesson_id} value={l.lesson_id}>
-                      {l.lesson_id}: {l.title.slice(0, 50)}
-                      {alreadySaved ? ' (Ήδη αποθηκευμένο)' : ''}
-                    </option>
-                  );
-                })}
-              </select>
-
-              {selectedEclassId && (
-                <button
-                  type="button"
-                  onClick={() => handleSelectEclassLesson(selectedEclassId)}
-                  disabled={isLoadingEclass || isSubmitting}
-                  className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 cursor-pointer flex items-center justify-center gap-1.5 transition"
-                >
-                  <Download className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Επαναφόρτωση</span>
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* Section 2: Core Lesson Details */}
+          {/* Section 1: Core Lesson Details (100% Custom / Manual or Imported) */}
           <div className="bg-slate-950/70 p-4 rounded-xl border border-slate-800 space-y-4">
-            <h3 className="text-sm font-semibold text-slate-200">
-              2. Βασικά Στοιχεία Μαθήματος
-            </h3>
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-amber-400 flex items-center gap-1.5">
+                <Sparkles className="w-4 h-4" />
+                1. Στοιχεία Μαθήματος
+              </h3>
+              <span className="text-[11px] text-slate-400">
+                Μπορείτε να εισάγετε οποιοδήποτε μάθημα (π.χ. 055, 056, 100...)
+              </span>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Lesson Number */}
               <div>
                 <label className="block text-xs font-medium text-slate-300 mb-1">
-                  Αριθμός Μαθήματος <span className="text-rose-400">*</span>
+                  Αριθμός / Κωδικός Μαθήματος <span className="text-rose-400">*</span>
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="π.χ. 038 ή 014α"
+                  placeholder="π.χ. 055, 056, 038, 014α"
                   value={number}
                   onChange={(e) => setNumber(e.target.value)}
                   disabled={isSubmitting}
                   className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-100 font-mono focus:border-amber-500 outline-none"
                 />
-                {isExistingLessonNumber && (
+                {isExistingLessonNumber ? (
                   <p className="text-[11px] text-amber-400 mt-1 flex items-center gap-1">
                     <Info className="w-3 h-3 shrink-0" />
                     Υπάρχει ήδη μάθημα με αυτόν τον αριθμό (θα ενημερωθεί).
+                  </p>
+                ) : (
+                  <p className="text-[11px] text-slate-500 mt-1">
+                    Οποιοσδήποτε αριθμός ή αλφαριθμητικός κωδικός.
                   </p>
                 )}
               </div>
@@ -386,7 +347,7 @@ export const NewLessonModal: React.FC<NewLessonModalProps> = ({
                 <div className="flex gap-2">
                   <input
                     type="text"
-                    placeholder="π.χ. Μάθημα 038: Ρευστά - Εξίσωση Bernoulli & Συνέχεια"
+                    placeholder="π.χ. Μάθημα 055: Επαναληπτικές Ασκήσεις & Ειδικά Θέματα"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     disabled={isSubmitting}
@@ -397,6 +358,7 @@ export const NewLessonModal: React.FC<NewLessonModalProps> = ({
                       type="button"
                       onClick={() => setTitle(`Μάθημα ${number}`)}
                       className="px-2.5 py-1 text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 cursor-pointer"
+                      title="Αυτόματος τίτλος"
                     >
                       Default
                     </button>
@@ -462,10 +424,77 @@ export const NewLessonModal: React.FC<NewLessonModalProps> = ({
                   )}
                 </div>
                 <p className="text-[11px] text-slate-500 mt-1">
-                  Το σύστημα θα εξαγάγει αυτόματα όλες τις σελίδες σε υψηλή ανάλυση.
+                  (Προαιρετικό) Το σύστημα εξάγει αυτόματα όλες τις σελίδες σε υψηλή ανάλυση.
                 </p>
               </div>
             </div>
+          </div>
+
+          {/* Section 2: Optional eClass Auto-fill Helper (Collapsible) */}
+          <div className="bg-slate-950/50 rounded-xl border border-slate-800/80 overflow-hidden">
+            <button
+              type="button"
+              onClick={() => setShowEclassHelper(!showEclassHelper)}
+              className="w-full p-3.5 flex items-center justify-between text-left hover:bg-slate-900/40 transition cursor-pointer"
+            >
+              <div className="flex items-center gap-2">
+                <Download className="w-4 h-4 text-emerald-400" />
+                <span className="text-xs font-semibold text-slate-200">
+                  Προαιρετικά: Αυτόματη συμπλήρωση από Open eClass API
+                </span>
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-md bg-slate-800 text-slate-400">
+                  {availableEclassLessons.length} διαθέσιμα
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                <span>{showEclassHelper ? 'Απόκρυψη' : 'Εμφάνιση'}</span>
+                {showEclassHelper ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              </div>
+            </button>
+
+            {showEclassHelper && (
+              <div className="p-4 pt-0 space-y-3 border-t border-slate-800/60 bg-slate-950/70">
+                <p className="text-xs text-slate-400 mt-3">
+                  Εάν το μάθημα υπάρχει ήδη στο eClass, μπορείτε να το επιλέξετε παρακάτω για να αντληθούν αυτόματα ο τίτλος, το YouTube βίντεο και οι επίσημες χρονοετικέτες:
+                </p>
+
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                  <select
+                    value={selectedEclassId}
+                    onChange={(e) => handleSelectEclassLesson(e.target.value)}
+                    disabled={isLoadingEclass || isSubmitting}
+                    className="flex-1 bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-xs text-slate-200 outline-none focus:border-amber-500 disabled:opacity-50"
+                  >
+                    <option value="">-- Επιλέξτε μάθημα από το eClass (προαιρετικό) --</option>
+                    {availableEclassLessons.map((l) => {
+                      const alreadySaved = existingLessons.some((ex) => ex.number === l.lesson_id);
+                      return (
+                        <option key={l.lesson_id} value={l.lesson_id}>
+                          {l.lesson_id}: {l.title.slice(0, 50)}
+                          {alreadySaved ? ' (Ήδη αποθηκευμένο)' : ''}
+                        </option>
+                      );
+                    })}
+                  </select>
+
+                  {selectedEclassId && (
+                    <button
+                      type="button"
+                      onClick={() => handleSelectEclassLesson(selectedEclassId)}
+                      disabled={isLoadingEclass || isSubmitting}
+                      className="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg border border-slate-700 cursor-pointer flex items-center justify-center gap-1.5 transition"
+                    >
+                      {isLoadingEclass ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-amber-400" />
+                      ) : (
+                        <Download className="w-3.5 h-3.5 text-amber-400" />
+                      )}
+                      <span>Επαναφόρτωση</span>
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Section 3: Timestamps Editor */}
@@ -473,7 +502,7 @@ export const NewLessonModal: React.FC<NewLessonModalProps> = ({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <h3 className="text-sm font-semibold text-slate-200">
-                  3. Χρονοετικέτες Μαθήματος
+                  2. Χρονοετικέτες & Συγχρονισμός
                 </h3>
                 <span className="px-2 py-0.5 rounded-full bg-slate-800 text-amber-400 font-mono text-xs border border-slate-700">
                   {timestamps.length} σημεία
@@ -509,7 +538,7 @@ export const NewLessonModal: React.FC<NewLessonModalProps> = ({
                   Δεν έχουν προστεθεί ακόμη χρονοετικέτες.
                 </p>
                 <p className="text-[11px] text-slate-500">
-                  Μπορείτε να επιλέξετε μάθημα από το eClass παραπάνω ή να προσθέσετε χειροκίνητα.
+                  Μπορείτε να προσθέσετε χειροκίνητα σημεία συγχρονισμού του βίντεο με τις σελίδες PDF.
                 </p>
                 <button
                   type="button"

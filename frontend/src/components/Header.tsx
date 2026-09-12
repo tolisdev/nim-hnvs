@@ -34,7 +34,7 @@ export const Header: React.FC<HeaderProps> = ({
   onLogout,
   onToggleDrawer,
   completedCount = 0,
-  totalLessonsCount = 54,
+  totalLessonsCount = 0,
   onOpenShortcuts,
   onOpenNewLesson
 }) => {
@@ -47,7 +47,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               onClick={onToggleDrawer}
               className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-amber-400 hover:text-amber-300 border border-slate-700 cursor-pointer transition shadow-sm flex items-center gap-1.5"
-              title="Άνοιγμα λίστας μαθημάτων (54 Μαθήματα)"
+              title="Άνοιγμα λίστας μαθημάτων"
             >
               <Menu className="w-4 h-4" />
               <span className="hidden md:inline text-xs font-semibold text-slate-200">Μαθήματα</span>
@@ -83,7 +83,7 @@ export const Header: React.FC<HeaderProps> = ({
             }`}
           >
             <LayoutGrid className="w-3.5 h-3.5" />
-            <span>Αρχική (54 Μαθήματα)</span>
+            <span>Όλα τα Μαθήματα</span>
           </button>
 
           <button

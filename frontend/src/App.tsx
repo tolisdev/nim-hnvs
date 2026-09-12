@@ -326,7 +326,7 @@ export function App() {
         onLogout={handleLogout}
         onToggleDrawer={() => setIsDrawerOpen(!isDrawerOpen)}
         completedCount={completedLessons.length}
-        totalLessonsCount={lessons.length || 54}
+        totalLessonsCount={lessons.length}
         onOpenShortcuts={() => setIsShortcutsOpen(true)}
         onOpenNewLesson={() => setIsNewLessonOpen(true)}
       />
@@ -354,10 +354,10 @@ export function App() {
                 <button
                   onClick={() => setIsDrawerOpen(true)}
                   className="flex items-center gap-1.5 px-3 py-1.5 bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 font-bold text-xs rounded-xl border border-amber-500/30 cursor-pointer transition shadow-sm"
-                  title="Άνοιγμα λίστας μαθημάτων (54 διαθέσιμα μαθήματα)"
+                  title="Άνοιγμα λίστας μαθημάτων"
                 >
                   <Menu className="w-4 h-4 text-amber-400" />
-                  <span>Επιλογή Μαθήματος (54)</span>
+                  <span>Μαθήματα ({lessons.length})</span>
                 </button>
 
                 <button
