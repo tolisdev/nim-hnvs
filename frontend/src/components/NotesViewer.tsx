@@ -36,7 +36,7 @@ export const NotesViewer: React.FC<NotesViewerProps> = ({
 }) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [zoom, setZoom] = useState<number>(100);
-  const [isFitWidth, setIsFitWidth] = useState<boolean>(true);
+  const [fitMode, setFitMode] = useState<'page' | 'width' | 'custom'>('page');
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
 
   const pageTimestamps = useMemo(() => {
@@ -47,23 +47,18 @@ export const NotesViewer: React.FC<NotesViewerProps> = ({
   const currentPageInfo = pages.find((p) => p.page_number === currentPage) || pages[0];
 
   const handleZoomIn = () => {
-    setIsFitWidth(false);
-    setZoom((prev) => Math.min(220, prev + 15));
+    setFitMode('custom');
+    setZoom((prev) => Math.min(240, prev + 15));
   };
 
   const handleZoomOut = () => {
-    setIsFitWidth(false);
-    setZoom((prev) => Math.max(60, prev - 15));
+    setFitMode('custom');
+    setZoom((prev) => Math.max(50, prev - 15));
   };
 
   const handleResetZoom = () => {
     setZoom(100);
-    setIsFitWidth(true);
-  };
-
-  const toggleFitWidth = () => {
-    setIsFitWidth(!isFitWidth);
-    if (!isFitWidth) setZoom(100);
+    setFitMode('page');
   };
 
   return (
@@ -160,7 +155,7 @@ export const NotesViewer: React.FC<NotesViewerProps> = ({
         <div className="flex items-center gap-1.5 bg-slate-950/80 rounded-xl p-1 border border-slate-800">
           <button
             onClick={handleZoomOut}
-            disabled={zoom <= 60}
+            disabled={zoom <= 50}
             className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-200 disabled:opacity-30 cursor-pointer transition"
             title="Σμίκρυνση (-)"
             aria-label="Σμίκρυνση"
@@ -173,12 +168,12 @@ export const NotesViewer: React.FC<NotesViewerProps> = ({
             className="px-2 py-0.5 text-[11px] font-mono font-bold text-slate-300 hover:text-amber-300 transition cursor-pointer"
             title="Επαναφορά μεγέθους στο 100%"
           >
-            {zoom}%
+            {fitMode === 'page' ? 'Auto' : `${zoom}%`}
           </button>
 
           <button
             onClick={handleZoomIn}
-            disabled={zoom >= 220}
+            disabled={zoom >= 240}
             className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-200 disabled:opacity-30 cursor-pointer transition"
             title="Μεγέθυνση (+)"
             aria-label="Μεγέθυνση"
@@ -188,17 +183,37 @@ export const NotesViewer: React.FC<NotesViewerProps> = ({
 
           <div className="h-3.5 w-px bg-slate-800" />
 
-          <button
-            onClick={toggleFitWidth}
-            className={`px-2 py-1 rounded-lg text-[11px] font-medium transition cursor-pointer ${
-              isFitWidth
-                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold'
-                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-            }`}
-            title="Αυτόματη προσαρμογή πλάτους"
-          >
-            Fit
-          </button>
+          {/* Fit Mode Switcher: Page vs Width */}
+          <div className="flex items-center gap-0.5 bg-slate-900 rounded-lg p-0.5 border border-slate-800">
+            <button
+              onClick={() => {
+                setFitMode('page');
+                setZoom(100);
+              }}
+              className={`px-2 py-0.5 rounded text-[11px] font-medium transition cursor-pointer ${
+                fitMode === 'page'
+                  ? 'bg-amber-500 text-slate-950 font-bold shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+              title="Προσαρμογή ολόκληρης σελίδας (όλα τα περιθώρια ορατά)"
+            >
+              Σελίδα
+            </button>
+            <button
+              onClick={() => {
+                setFitMode('width');
+                setZoom(100);
+              }}
+              className={`px-2 py-0.5 rounded text-[11px] font-medium transition cursor-pointer ${
+                fitMode === 'width'
+                  ? 'bg-amber-500 text-slate-950 font-bold shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+              title="Προσαρμογή πλάτους"
+            >
+              Πλάτος
+            </button>
+          </div>
 
           <button
             onClick={() => setIsFullscreen(!isFullscreen)}
@@ -248,43 +263,66 @@ export const NotesViewer: React.FC<NotesViewerProps> = ({
       {/* Main Canvas Area */}
       <div
         ref={scrollContainerRef}
-        className="flex-1 overflow-auto p-3 sm:p-6 flex items-start justify-center bg-slate-950/90 relative"
+        className="flex-1 overflow-auto bg-[#070a11] relative scroll-smooth"
       >
-        {currentPageInfo ? (
-          <div
-            className="relative shadow-2xl rounded-xl overflow-hidden border border-slate-800 transition-all duration-150"
-            style={{
-              width: isFitWidth ? '100%' : `${zoom}%`,
-              maxWidth: isFitWidth ? '100%' : 'none'
-            }}
-          >
-            <img
-              src={currentPageInfo.image_url}
-              alt={`Χειρόγραφες Σημειώσεις - Σελίδα ${currentPage}`}
-              className="w-full h-auto object-contain block select-none rounded-xl"
-              draggable={false}
-            />
+        <div
+          className={`min-h-full w-full flex flex-col items-center p-3 sm:p-5 ${
+            fitMode === 'page' ? 'justify-center pb-5' : 'justify-start pb-16'
+          }`}
+        >
+          {currentPageInfo ? (
+            <div
+              className="relative shadow-[0_12px_36px_rgba(0,0,0,0.75)] rounded-[2px] bg-white border border-slate-700/70 ring-1 ring-white/10 transition-all duration-150 flex items-center justify-center overflow-hidden"
+              style={
+                fitMode === 'page'
+                  ? {
+                      maxHeight: isFullscreen ? 'calc(100vh - 140px)' : '580px',
+                      width: 'auto',
+                      maxWidth: '100%'
+                    }
+                  : fitMode === 'width'
+                  ? {
+                      width: '100%',
+                      maxWidth: '960px'
+                    }
+                  : {
+                      width: `${zoom}%`,
+                      maxWidth: 'none'
+                    }
+              }
+            >
+              <img
+                src={currentPageInfo.image_url}
+                alt={`Χειρόγραφες Σημειώσεις - Σελίδα ${currentPage}`}
+                className={`block select-none rounded-[2px] ${
+                  fitMode === 'page'
+                    ? 'max-h-[calc(100vh-140px)] sm:max-h-[580px] w-auto h-auto object-contain'
+                    : 'w-full h-auto object-contain'
+                }`}
+                draggable={false}
+              />
 
-            {/* Non-distracting active timestamp indicator */}
-            {activeTimestamp && activeTimestamp.page === currentPage && (
-              <div className="absolute top-3 right-3 bg-slate-900/90 border border-amber-500/60 text-amber-300 text-xs px-3 py-1.5 rounded-xl font-semibold shadow-xl backdrop-blur flex items-center gap-2 ring-1 ring-amber-500/30">
-                <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
-                </span>
-                <span className="font-mono">{activeTimestamp.timestamp_str}</span>
-                <span className="hidden sm:inline text-[11px] text-slate-300 max-w-[140px] truncate">
-                  {activeTimestamp.label}
-                </span>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="flex flex-col items-center justify-center text-slate-500 text-sm py-20 gap-2">
-            <FileText className="w-10 h-10 text-slate-700" />
-            <span>Δεν έχουν φορτωθεί χειρόγραφες σημειώσεις για αυτό το μάθημα.</span>
-          </div>
-        )}
+              {/* Non-distracting active timestamp indicator */}
+              {activeTimestamp && activeTimestamp.page === currentPage && (
+                <div className="absolute top-3 right-3 bg-slate-900/90 border border-amber-500/60 text-amber-300 text-xs px-3 py-1.5 rounded-xl font-semibold shadow-xl backdrop-blur flex items-center gap-2 ring-1 ring-amber-500/30 pointer-events-none">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                  </span>
+                  <span className="font-mono">{activeTimestamp.timestamp_str}</span>
+                  <span className="hidden sm:inline text-[11px] text-slate-300 max-w-[140px] truncate">
+                    {activeTimestamp.label}
+                  </span>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center text-slate-500 text-sm py-20 gap-2">
+              <FileText className="w-10 h-10 text-slate-700" />
+              <span>Δεν έχουν φορτωθεί χειρόγραφες σημειώσεις για αυτό το μάθημα.</span>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
