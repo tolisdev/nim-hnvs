@@ -4,6 +4,7 @@ import { VideoPlayer } from './components/VideoPlayer';
 import { NotesViewer } from './components/NotesViewer';
 import { TimelineBottom } from './components/TimelineBottom';
 import { AdminModal } from './components/AdminModal';
+import { NewLessonModal } from './components/NewLessonModal';
 import { HomePage } from './components/HomePage';
 import { LoginModal } from './components/LoginModal';
 import { LessonDrawer } from './components/LessonDrawer';
@@ -28,6 +29,7 @@ export function App() {
   const [activeTimestamp, setActiveTimestamp] = useState<TimestampItem | null>(null);
   const [seekToSeconds, setSeekToSeconds] = useState<number | null>(null);
   const [isAdminOpen, setIsAdminOpen] = useState<boolean>(false);
+  const [isNewLessonOpen, setIsNewLessonOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSyncLocked, setIsSyncLocked] = useState<boolean>(true);
   const [currentView, setCurrentView] = useState<'home' | 'player'>('home');
@@ -108,6 +110,7 @@ export function App() {
     sessionStorage.removeItem('admin_user');
     setIsLoggedIn(false);
     setIsAdminOpen(false);
+    setIsNewLessonOpen(false);
   };
 
   useEffect(() => {
@@ -121,6 +124,7 @@ export function App() {
           sessionStorage.removeItem('admin_user');
           setIsLoggedIn(false);
           setIsAdminOpen(false);
+          setIsNewLessonOpen(false);
         }
       });
     }
@@ -230,6 +234,28 @@ export function App() {
     }
   };
 
+  const handleLessonCreated = (newLesson: Lesson) => {
+    setLessons((prev) => {
+      const idx = prev.findIndex((l) => l.id === newLesson.id || l.number === newLesson.number);
+      if (idx >= 0) {
+        const copy = [...prev];
+        copy[idx] = newLesson;
+        return copy;
+      }
+      return [newLesson, ...prev];
+    });
+    setSelectedLesson(newLesson);
+    setCurrentPage(1);
+    setSeekToSeconds(0);
+    setCurrentSeconds(0);
+    setActiveTimestamp(null);
+    setCurrentView('player');
+    setLastWatchedLessonId(newLesson.number || newLesson.id);
+    try {
+      localStorage.setItem('student_last_watched', newLesson.number || newLesson.id);
+    } catch {}
+  };
+
   // Keyboard shortcut listener for '?', 'v', 's'
   useEffect(() => {
     const handleGlobalShortcuts = (e: KeyboardEvent) => {
@@ -302,6 +328,7 @@ export function App() {
         completedCount={completedLessons.length}
         totalLessonsCount={lessons.length || 54}
         onOpenShortcuts={() => setIsShortcutsOpen(true)}
+        onOpenNewLesson={() => setIsNewLessonOpen(true)}
       />
 
       {/* Main Content Area */}
@@ -315,6 +342,8 @@ export function App() {
             favoriteLessons={favoriteLessons}
             onToggleFavorite={handleToggleFavorite}
             lastWatchedLessonId={lastWatchedLessonId}
+            isLoggedIn={isLoggedIn}
+            onOpenNewLesson={() => setIsNewLessonOpen(true)}
           />
         ) : (
           <>
@@ -562,6 +591,8 @@ export function App() {
         savedLessons={lessons}
         completedLessons={completedLessons}
         favoriteLessons={favoriteLessons}
+        isLoggedIn={isLoggedIn}
+        onOpenNewLesson={() => setIsNewLessonOpen(true)}
       />
 
       {/* Admin Modal - accessible ONLY when logged in */}
@@ -571,6 +602,20 @@ export function App() {
           isOpen={isAdminOpen}
           onClose={() => setIsAdminOpen(false)}
           onLessonSaved={handleLessonSaved}
+          onOpenNewLesson={() => {
+            setIsAdminOpen(false);
+            setIsNewLessonOpen(true);
+          }}
+        />
+      )}
+
+      {/* New Lesson Modal - accessible ONLY when logged in */}
+      {isLoggedIn && (
+        <NewLessonModal
+          isOpen={isNewLessonOpen}
+          onClose={() => setIsNewLessonOpen(false)}
+          onLessonCreated={handleLessonCreated}
+          existingLessons={lessons}
         />
       )}
     </div>

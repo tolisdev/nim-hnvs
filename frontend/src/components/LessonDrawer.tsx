@@ -7,7 +7,8 @@ import {
   Play,
   FileText,
   Star,
-  Check
+  Check,
+  Plus
 } from 'lucide-react';
 import { fetchAvailableEclassLessons } from '../api';
 import type { EclassLessonSummary, Lesson } from '../api';
@@ -21,6 +22,8 @@ interface LessonDrawerProps {
   savedLessons: Lesson[];
   completedLessons?: string[];
   favoriteLessons?: string[];
+  isLoggedIn?: boolean;
+  onOpenNewLesson?: () => void;
 }
 
 export const LessonDrawer: React.FC<LessonDrawerProps> = ({
@@ -30,7 +33,9 @@ export const LessonDrawer: React.FC<LessonDrawerProps> = ({
   onSelectLesson,
   savedLessons,
   completedLessons = [],
-  favoriteLessons = []
+  favoriteLessons = [],
+  isLoggedIn = false,
+  onOpenNewLesson
 }) => {
   const [allLessons, setAllLessons] = useState<EclassLessonSummary[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -119,13 +124,28 @@ export const LessonDrawer: React.FC<LessonDrawerProps> = ({
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
-            title="Κλείσιμο"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-1.5">
+            {isLoggedIn && onOpenNewLesson && (
+              <button
+                onClick={() => {
+                  onClose();
+                  onOpenNewLesson();
+                }}
+                className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 shadow-sm cursor-pointer transition"
+                title="Δημιουργία Νέου Μαθήματος (Admin)"
+              >
+                <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+                <span>Νέο</span>
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition cursor-pointer"
+              title="Κλείσιμο"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Search & Quick Filters */}

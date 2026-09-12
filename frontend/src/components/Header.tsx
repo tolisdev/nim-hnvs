@@ -1,5 +1,5 @@
 import React from 'react';
-import { Settings, LayoutGrid, Play, Menu, LogIn, LogOut, Keyboard, CheckCircle2 } from 'lucide-react';
+import { Settings, LayoutGrid, Play, Menu, LogIn, LogOut, Keyboard, CheckCircle2, Plus } from 'lucide-react';
 import type { Lesson } from '../api';
 import logoImg from '../assets/logo.webp';
 
@@ -18,6 +18,7 @@ interface HeaderProps {
   completedCount?: number;
   totalLessonsCount?: number;
   onOpenShortcuts?: () => void;
+  onOpenNewLesson?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -34,7 +35,8 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleDrawer,
   completedCount = 0,
   totalLessonsCount = 54,
-  onOpenShortcuts
+  onOpenShortcuts,
+  onOpenNewLesson
 }) => {
   return (
     <header className="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 sticky top-0 z-40 px-4 py-2.5">
@@ -153,6 +155,18 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Authentication & Admin Button */}
           {isLoggedIn ? (
             <div className="flex items-center gap-2">
+              {/* Create New Lesson Modal Button */}
+              {onOpenNewLesson && (
+                <button
+                  onClick={onOpenNewLesson}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 shadow-sm cursor-pointer transition"
+                  title="Δημιουργία Νέου Μαθήματος"
+                >
+                  <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+                  <span className="hidden sm:inline">Νέο Μάθημα</span>
+                </button>
+              )}
+
               {/* Admin Button: Visible ONLY when logged in */}
               <button
                 onClick={onToggleAdmin}

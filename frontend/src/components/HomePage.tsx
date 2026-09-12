@@ -15,7 +15,8 @@ import {
   LayoutGrid,
   List,
   SlidersHorizontal,
-  ListChecks
+  ListChecks,
+  Plus
 } from 'lucide-react';
 import { fetchAvailableEclassLessons } from '../api';
 import type { EclassLessonSummary, Lesson } from '../api';
@@ -29,6 +30,8 @@ interface HomePageProps {
   favoriteLessons?: string[];
   onToggleFavorite?: (lessonId: string) => void;
   lastWatchedLessonId?: string | null;
+  isLoggedIn?: boolean;
+  onOpenNewLesson?: () => void;
 }
 
 function extractYouTubeId(url?: string): string | null {
@@ -44,7 +47,9 @@ export const HomePage: React.FC<HomePageProps> = ({
   onToggleCompleted,
   favoriteLessons = [],
   onToggleFavorite,
-  lastWatchedLessonId
+  lastWatchedLessonId,
+  isLoggedIn = false,
+  onOpenNewLesson
 }) => {
   const [allLessons, setAllLessons] = useState<EclassLessonSummary[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -502,6 +507,18 @@ export const HomePage: React.FC<HomePageProps> = ({
               <List className="w-4 h-4" />
             </button>
           </div>
+
+          {/* Admin Create New Lesson Quick Action */}
+          {isLoggedIn && onOpenNewLesson && (
+            <button
+              onClick={onOpenNewLesson}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 shadow-sm cursor-pointer transition shrink-0"
+              title="Δημιουργία Νέου Μαθήματος (Admin)"
+            >
+              <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
+              <span>Νέο Μάθημα</span>
+            </button>
+          )}
         </div>
       </div>
 
